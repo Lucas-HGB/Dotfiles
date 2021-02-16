@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+hostnamectl
+while read -r -n1 key
+do
+	break;
+done

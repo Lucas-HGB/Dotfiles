@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+while : 
+do
+    status=$(bluetoothctl info 94:DB:56:F5:75:1F | grep "\bConnected\b")
+    if [[ "$status" == *"no"* ]] ; then
+        echo "Bluetooth Headphone not Connected" 
+        echo "Establishing connection to Bluetooth Headphone"
+        bluetoothctl connect 94:DB:56:F5:75:1F
+    fi
+    sleep 5
+done
