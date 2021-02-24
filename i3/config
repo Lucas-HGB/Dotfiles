@@ -29,6 +29,9 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym XF86AudioPrev exec --no-startup-id sp prev
+bindsym XF86AudioPlay exec --no-startup-id sp play
+bindsym XF86AudioNext exec --no-startup-id sp next
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -39,7 +42,7 @@ floating_modifier $mod
 bindsym $mod+q kill
 bindsym $mod+Shift+c reload
 bindsym $mod+Escape exec --no-startup-id "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
-bindsym $mod+space exec --no-startup-id "python3 ~/.config/custom/Change_Keyboard.py"
+bindsym $mod+space exec --no-startup-id ~/.config/custom/Change_Keyboard
 bindsym Print exec --no-startup-id flameshot gui
 bindsym $mod+l exec --no-startup-id i3lock-fancy
 
@@ -81,26 +84,23 @@ bindsym $mod+f fullscreen toggle
 set $ws1 "Code "
 set $ws2 "Web "
 set $ws3 "System " 
-set $ws4 "Files "
+set $ws4 "Chat "
 set $ws5 "Music 阮"
-set $ws6 "Chat "
-set $ws7 "Social 暑"
-set $ws8 "Gaming "
-set $ws9 "9"
-set $ws10 "10"
+set $ws6 "Study "
+set $ws7 "Gaming "
+set $ws8 "8"
 
+#set $ws4 "Files "
 
 # Switching
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2; exec [ $(ps h -C firefox | wc -l) = 0 ] && /usr/bin/firefox -s
 bindsym $mod+3 workspace $ws3; exec [ $(ps h -C alacritty | wc -l) = 0 ] && /usr/bin/alacritty; exec [ $(ps h -C alacritty | wc -l) = 0 ] && /usr/bin/alacritty
-bindsym $mod+4 workspace $ws4
+bindsym $mod+4 workspace $ws4; exec [ $(ps h -C whatsdesk | wc -l) = 0 ] && /usr/bin/whatsdesk -s
 bindsym $mod+5 workspace $ws5; exec [ $(ps h -C spotify | wc -l) = 0 ] && /usr/bin/spotify -s
-bindsym $mod+6 workspace $ws6; exec [ $(ps h -C whatsdesk | wc -l) = 0 ] && /usr/bin/whatsdesk -s; exec [ $(ps h -C discord | wc -l) = 0 ] && /usr/bin/discord -s 
-bindsym $mod+7 workspace $ws7
-bindsym $mod+8 workspace $ws8; exec [ $(ps h -C lutris | wc -l) = 0 ] && /usr/bin/lutris -s
-bindsym $mod+9 workspace $ws9
-bindsym $mod+0 workspace $ws10
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7; exec [ $(ps h -C lutris | wc -l) = 0 ] && /usr/bin/lutris -s
+bindsym $mod+8 workspace $ws8
 
 
 # Move Focused Window
@@ -161,7 +161,7 @@ exec_always --no-startup-id picom --config ~/.config/picom.conf
 
 # Startup applications
 
-exec .config/custom/startup.sh
+exec .config/custom/startup
 
 
 # Open specific applications in floating mode
