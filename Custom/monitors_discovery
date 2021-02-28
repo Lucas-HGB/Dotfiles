@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+monitors=()
+commands=()
+mapfile -t allMonitors < <( xrandr | grep -n "\bconnected\b" )
+for index in $(seq ${#allMonitors[@]}) ; do
+    ## Gets line to get best config from
+    index=$(( index -= 1 )) 
+    if [[ ${allMonitors[$index]:1:1} == *":"* ]] ; then
+        line=${allMonitors[$index]:0:1}
+    else
+        line=${allMonitors[$index]:0:2}
+    fi
+
+    ## Get name of Monitor
+    if [[ ${allMonitors[$index]} == *"HDMI-0"* ]] ; then
+        name="HDMI-0"
+    elif [[ ${allMonitors[$index]} == *"DP-0"* ]] ; then
+        name="DP-0"
+    fi
+
+    line=$(( line += 1 ))
+
+    ## Gets best config for monitor
+    monitors[index]=$(xrandr | head -n "$line" | tail -n 1)
+
+    ## Best Resolution
+
+    resolution=${monitors[$index]:3:9}
+
+    ## Splits configs into pieces
+    IFS=' ' read -ra ADDR <<< "${monitors[$index]}"
+    rate=1
+    for i in "${ADDR[@]}"; do
+        ## If valid refresh rate
+        if [[ "$i" != *"x"* ]] && [[ !"$i" != *"*"* ]] && [[ !"$i" != *"+"* ]]; then
+            if [[ $(echo "$i > $rate" | bc -l) -eq 1 ]] ; then
+                rate=$i
+            fi
+        fi
+    done
+    echo "Name: $name"
+    echo "Resolution: $resolution"
+    echo "Refresh Rate: $rate"
+    echo "-----"
+    if [[ $index -eq 0 ]] ; then
+        #xrandr --output $name  --mode $resolution --rate $rate
+    else
+        xrandr --output $name --primary --mode $resolution --rate $rate --left-of $lastMonitorName
+    fi
+    lastMonitorName=$name
+done
+
