@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+pacman=$(pacman -Qu | wc -l)
+if [ ${#pacman} -gt 0 ] ; then
+	all=$pacman
+else
+	all=0
+fi
+echo $all 
