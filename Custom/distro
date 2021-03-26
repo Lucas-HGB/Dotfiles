@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+distro=$(cat /etc/*-release | grep PRETTY_NAME | tr '"' "\n")
+distro=${distro:12}
+if [[ "$distro" == *"Arch"* ]] ; then
+	echo Arch Linux 
+
+elif [[ "$distro" == *"Manjaro"* ]] ; then
+	echo Manjaro 
+
+elif [[ "$distro" == *"Red"* ]] ; then
+	echo Red Hat Enterprise Linux 
+
+elif [[ "$distro" == *"Cent"* ]] ; then
+	echo CentOS 
+
+elif [[ "$distro" == *"Ubuntu"* ]] ; then
+	echo Ubuntu 
+
+elif [[ "$distro" == *"Mint"* ]] ; then
+	echo Linux Mint 
+fi
