@@ -26,6 +26,7 @@ source $ZSH/oh-my-zsh.sh
 alias la='exa -al --color=always --group-directories-first' ## Lists all files
 alias ls='exa -l --color=always --group-directories-first' ## Lists everything not hidden
 alias grep='grep --color=auto'
+alias cls='clear'
 
 
 ## -- EXTRAS -- ##
