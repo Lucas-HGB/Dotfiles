@@ -6,12 +6,13 @@ $Folders = "C:\Battlestate Games\EFT\EscapeFromTarkov_Data", "C:\Battlestate Gam
 
 $totalSize = 0
 $folderSize = 0
-$folderCount = $Folders.Count
-foreach ($Folder in $Folders)
-{
+$folderCount = 0
+foreach ($Folder in $Folders) {if (Test-Path -Path $Folder) {
 	$folderSize = "{0:N2}" -f ((gci -force -Recurse -erroraction 'silentlycontinue' "$Folder" | measure Length -erroraction 'silentlycontinue' -s).sum / 1Gb) 
 	$totalSize += $folderSize
-    Remove-Item -Recurse -Force -Path "$Folder" -erroraction 'silentlycontinue'
-}
-#Write-Host "Cleaned Up $totalSize GB from $folderCount"
-powershell.exe -WindowStyle hidden -noprofile -File "S:\Documents\Programs\Notification.ps1" "Cleaned Up $totalSize GB from $folderCount Folders"
+	$folderCount += 1
+	Remove-Item -Recurse -Force -Path "$Folder" -erroraction 'silentlycontinue'
+}}
+
+
+powershell -ExecutionPolicy bypass -command "& { . S:\Documents\Programs\Notify.ps1; Notify -Title 'System Cleanup' -PathToImg '$PSScriptRoot\BroomIcon.png' -Text 'Removed $totalSize GB from $folderCount Folders' }"
