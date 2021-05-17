@@ -6,9 +6,5 @@ Invoke-WebRequest "https://www.python.org/ftp/python/3.9.5/python-3.9.5-amd64.ex
 & "$DesktopPath\Python3.exe"
 $Nothing = Read-Host -Prompt "Após instalar o python com as definições padrões, aperte ENTER nessa tela do Powershell"
 
-
-
-$AppData = $env:LOCALAPPDATA
-& "$AppData\Programs\Python\Python39\python.exe -m pip install pillow"
-
-$Nothing = Read-Host -Prompt "Para rodar o programa, clique 2x no arquivo 'MonitorarImagem.py', localizado em seu Desktop (:"
+Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/Lucas-HGB/Dotfiles/main/PaiInstallpt2.ps1" -OutFile "$DesktopPath\Installpt2.ps1"
+powershell.exe -noprofile -executionpolicy bypass -File "$DesktopPath\Installpt2.ps1"
