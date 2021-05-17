@@ -1,4 +1,4 @@
-## RODAR
+## RODAR Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/Lucas-HGB/Dotfiles/main/PaiInstall.ps1" -OutFile "InstalarMonitoramentoFolder.ps1"; powershell.exe -noprofile -executionpolicy bypass -File ".\InstalarMonitoramentoFolder.ps1"
 
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/Lucas-HGB/Dotfiles/main/Pai.py" -OutFile "$DesktopPath\MonitorarImagem.py"
@@ -9,6 +9,6 @@ $Nothing = Read-Host -Prompt "Após instalar o python com as definições padrõ
 
 
 $AppData = $env:LOCALAPPDATA
-$AppData\Programs\Python\Python39\python.exe -m pip install pillow
+& "$AppData\Programs\Python\Python39\python.exe -m pip install pillow"
 
 $Nothing = Read-Host -Prompt "Para rodar o programa, clique 2x no arquivo 'MonitorarImagem.py', localizado em seu Desktop (:"
