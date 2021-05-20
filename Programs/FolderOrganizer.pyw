@@ -9,7 +9,7 @@ def filter(file):
         "Executável": ["exe", "msi"],
         "Office": ["docx", "xlsx", "pdf", "xls", "ods"],
         "Picture": ["png", "jpg"],
-        "Zippado": ["7z", "zip", "tar", "gz"],
+        "Zippado": ["7z", "zip", "rar", "tar", "gz"],
         "Audio": ["mp3"],
         "Video": ["mp4"],
         "Coding": ["py", "java", "cs", "ps1", "sh"]
