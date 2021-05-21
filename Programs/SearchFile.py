@@ -1,5 +1,4 @@
-from os import remove
-from os import listdir
+from os import remove, listdir
 from os.path import isfile, join
 
 count = 0
