@@ -1,75 +1,96 @@
 from os import listdir, mkdir
-from os.path import isfile, isdir, dirname, realpath
+from os.path import isfile, isdir, dirname, realpath, join
 from shutil import move
 from time import sleep
-from subprocess import Popen, CREATE_NO_WINDOW
+from subprocess import Popen, CREATE_NO_WINDOW, PIPE, run
+
+
+def get_command_output(command):
+    output = run(["powershell.exe", "-Command", command], stdout=PIPE).stdout.decode('utf-8')
+    return output.replace("\n", "").replace("\r", "")
 
 def filter(file):
     myDict = {
         "Executável": ["exe", "msi"],
         "Office": ["docx", "xlsx", "pdf", "xls", "ods"],
         "Picture": ["png", "jpg"],
-        "Zippado": ["7z", "zip", "rar", "tar", "gz"],
+        "Compressed": ["7z", "zip", "rar", "tar", "gz"],
         "Audio": ["mp3"],
         "Video": ["mp4"],
-        "Coding": ["py", "java", "cs", "ps1", "sh"]
+        "Coding": ["py", "java", "cs", "ps1", "sh", "html"]
         }
     for key,value in myDict.items():
         if any([file.endswith(ext) for ext in value]):
             return key
 
 def Main():
+    Downloads=get_command_output(""" powershell.exe -Command "Write-Host (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path" """)
+    Documents=get_command_output(""" powershell.exe -Command "[environment]::getfolderpath('MyDocuments')" """)
+    Pictures=get_command_output(""" powershell.exe -Command "[environment]::getfolderpath('MyPictures')" """)
+    Videos=get_command_output(""" powershell.exe -Command "[environment]::getfolderpath('MyVideos')" """)
+    Music=get_command_output(""" powershell.exe -Command "[environment]::getfolderpath('MyMusic')" """)
     while True:
-        for file in [file for file in listdir("S:\Downloads") if isfile(f"S:\Downloads\{file}") and not isdir(f"S:\Downloads\{file}") and not file.endswith("part")]:
+        for file in [file for file in listdir(Downloads) if isfile(join(Downloads, file)) and not file.endswith("part")]:
             result = filter(file)
             if result == "Executável":
-                try: mkdir("S:\Downloads\Executáveis")
-                except FileExistsError: pass
-                endDir = f"S:\Downloads\Executáveis\{file}"
-                move(f"S:\Downloads\{file}", endDir)
+                if not isdir(join(Downloads,"Executáveis")): 
+                    mkdir(join(Downloads,"Executáveis"))
+
+                endDir = join(Downloads,"Executáveis",file)
+                move(join(Downloads, file), endDir)
 
             elif result == "Office":
-                try: mkdir("S:\Documents\Office\{}".format(file.split(".")[-1]))
-                except FileExistsError: pass
-                endDir = "S:\Documents\Office\{}\{}".format(file.split(".")[-1], file)
-                move(f"S:\Downloads\{file}", endDir)
+                if not isdir(join(Documents, "Office")):
+                    mkdir(join(Documents, "Office"))
+
+                if not isdir(join(Documents,"Office", file.split(".")[-1])): 
+                    mkdir(join(Documents,"Office",file.split(".")[-1]))
+
+                endDir = join(Documents, "Office", file.split(".")[-1], file)
+                move(join(Downloads,file), endDir)
 
             elif result == "Picture":
-                endDir = "S:\Pictures\{}".format(file)
-                move(f"S:\Downloads\{file}", endDir)
+                endDir = "S:\\Pictures\\{}".format(file)
+                move(join(Downloads, file), endDir)
 
-            elif result == "Zippado":
-                try: mkdir("S:\Downloads\Zip")
-                except FileExistsError: pass
-                endDir = "S:\Downloads\Zip\{}".format(file)
-                move(f"S:\Downloads\{file}", endDir)
+            elif result == "Compressed":
+                if not isdir(join(Downloads,"Compressed")):
+                    mkdir(join(Downloads,"Compressed"))
+
+                endDir = join(Downloads,"Compressed",file)
+                move(join(Downloads,file), endDir)
 
             elif result == "Audio":
-                try: mkdir("S:\Music\Downloads")
-                except FileExistsError: pass
-                endDir = "S:\Music\Downloads\{}".format(file)
-                move(f"S:\Downloads\{file}", endDir)
+                if not isdir(join(Music,"Downloads")): 
+                    mkdir(join(Music,"Downloads"))
+
+                endDir = join(Music, "Downloads", file)
+                move(join(Downloads,file), endDir)
 
             elif result == "Coding":
-                try: mkdir("S:\Downloads\Coding")
-                except FileExistsError: pass
-                endDir = "S:\Downloads\Coding\{}".format(file)
-                move(f"S:\Downloads\{file}", endDir)
+                if not isdir(join(Downloads,"Coding")): 
+                    mkdir(join(Downloads,"Coding"))
+
+                endDir = join(Downloads, "Coding", file)
+                move(join(Downloads,file), endDir)
 
             elif result == "Video":
-                endDir = "S:\Videos\{}".format(file)
-                move(f"S:\Downloads\{file}", endDir)
+                endDir = join(Videos, file)
+                move(join(Downloads,file), endDir)
 
             else:
-                try: mkdir("S:\Downloads\{}".format(file.split(".")[-1]))
-                except FileExistsError: pass
-                endDir = "S:\Downloads\{}\{}".format(file.split(".")[-1], file)
-                move(f"S:\Downloads\{file}", endDir)
-            from base64 import b64encode
+                if not isdir(join(Downloads, file.split(".")[-1])): 
+                    mkdir(join(Downloads, file.split(".")[-1]))
+
+                endDir = join(Downloads, file.split(".")[-1], file)
+                move(join(Downloads,file), endDir)
             
 
             programDir = dirname(realpath(__file__))
-            Popen(r"""powershell -ExecutionPolicy unrestricted -command "& {{ . '{}\Notify.ps1'; Notify -Title 'Downloads' -PathToImg '{}\DownloadIcon.png' -Text 'Moved {} to {}' -Action '{}' }} " """.format(programDir, programDir ,file, endDir, endDir), creationflags=CREATE_NO_WINDOW)
+            partEndDir = "\\".join(endDir.split("\\")[-3::])
+            Popen(r"""powershell -ExecutionPolicy unrestricted -command "& {{ . '{}\\Notify.ps1'; Notify -Title 'Downloads' -PathToImg '{}\\DownloadIcon.png' -Text '{}' -Action '{}' }} " """.format(programDir, programDir, partEndDir, endDir), creationflags=CREATE_NO_WINDOW)
         sleep(3)
 
-Main()
+
+if __name__ == "__main__":
+    Main()
