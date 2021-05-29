@@ -1,18 +1,9 @@
-#!/usr/bin/env python3
-from subprocess import run, PIPE
-def get_current_config():
-    result = run(["setxkbmap", "-query"], stdout=PIPE)
-    return result
+#!/usr/bin/env bash
 
-def change_config(lang):
-    run(["setxkbmap", "-layout", f"{lang}"])
+currentConfig=$(setxkbmap -query)
 
-def change():
-    config = str(get_current_config())
-    if ("us" in config):
-        change_config("br")
-    elif ("br" in config):
-        change_config("us")
-
-if __name__ == "__main__":
-    change()
+if [[ $currentConfig == *"us"* ]] ; then
+	setxkbmap -layout br
+else
+	setxkbmap -layout us
+fi
