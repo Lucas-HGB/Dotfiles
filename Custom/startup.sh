@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-~/.config/polybar/launch.sh
-nitrogen --restore &
-flameshot &
-rclone mount OneDrive:Coding ~/OneDrive/Coding &
-rclone mount OneDrive:Documentos ~/OneDrive/Documentos &
-rclone mount OneDrive:Important ~/OneDrive/Important
+num=$(( $RANDOM % 4 ))
+if [ $num -gt 1 ] ; then
+	styli -w 4480 -h 1080 -c --no-xinerama
+	~/.config/polybar/pywal.sh ./wallpaper
+else
+	feh --random /media/Storage/Pictures/Wallpapers --bg-scale --no-xinerama &
+fi
+flameshot 
