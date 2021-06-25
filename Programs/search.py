@@ -14,24 +14,30 @@ def get_args():
 	parser.add_argument("-f", "--file", dest="file",
 						help="File to found", metavar="file")
 	parser.add_argument("-e", "--exclude", dest="exclude",
-					help="Folder para não procurar.", metavar="exclude", default="")
+					help="Folder para não procurar. Use & para separar mais de 1 folder", metavar="exclude", default="")
+	parser.add_argument("-T", "--threads", dest="threads",
+					help="Amount of Threads the program can use", metavar="threads", default=5)
+	parser.add_argument("-p", "--print", dest="print",
+					help="Amount of Threads the program can use", metavar="print", default=True)
 	parser.add_argument("-R", "--remove", dest="remove",
 					help="If enabled, will remove files found", metavar="remove", default=False)
-	parser.add_argument("-T", "--threads", dest="threads",
-					help="Amount of Threads the program can use", metavar="threads", default=50)
 	args = parser.parse_args()
 	return args
 
 def recurseFolder(folderToSearch):
 	global count, th_count
 	count += 1
-	print(folderToSearch)
+	if print_text:
+		print(folderToSearch)
 	try:
 		for FileOrFolder in [f for f in listdir(folderToSearch) if f.lower() not in exclusions]:
 			if fileToSearch.lower() in FileOrFolder.lower():
 				found.append(join(folderToSearch, FileOrFolder))
 				if remove:
-					rmtree(join(folderToSearch, FileOrFolder))
+					try:
+						rmtree(join(folderToSearch, FileOrFolder))
+					except (NotADirectoryError, PermissionError, FileNotFoundError):
+						pass
 
 			elif isdir(join(folderToSearch, FileOrFolder)):
 				if threading.active_count() < max_threads:
@@ -42,24 +48,25 @@ def recurseFolder(folderToSearch):
 					threads.append(th)
 				else:
 					recurseFolder(join(folderToSearch,FileOrFolder))
-	except PermissionError:
+	except (PermissionError, FileNotFoundError):
 		pass
 
 
 def run(args):
-	global threads, max_threads, fileToSearch, exclusions
+	global threads, max_threads, fileToSearch, exclusions, print_text
 	threads = [threading.Thread(target = sleep, args=(5,))]
 	threads[0].start()
 	max_threads = int(args.threads)
 	fileToSearch = args.file
 	remove = args.remove
-
+	print_text = args.print
 	exclusions = ["documents and settings", "winsxs", "servicing", "application data", 
-				  "$recycle.bin", "sys", "proc", "proton 6.3", "icons"]
-	[exclusions := exclusions + [exclusion_file.strip(" ")] for exclusion_file in args.exclude.split("|")]
+				  r"$recycle.bin", "sys", "proc", "proton 6.3", "icons", "compatdata"]
+	[exclusions := exclusions + [exclusion_file.strip(" ")] for exclusion_file in args.exclude.split("&")]
 	threading.Thread(target=recurseFolder, args=(args.search,)).start()
-	sleep(2)
-	[th.join() for th in threads]
+	sleep(0.2)
+	while threading.active_count() > 1:
+		sleep(0.2)
 
 
 if __name__ == "__main__":
