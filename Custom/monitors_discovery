@@ -2,7 +2,6 @@
 monitorConfigs=()
 commands=()
 mapfile -t xrandrLines < <( xrandr | grep -n "\bconnected\b" )
-xrandr >> xrandr.txt
 for index in $(seq ${#xrandrLines[@]}) ; do
     ## Gets line to get best config from
     index=$(( index -= 1 )) 
