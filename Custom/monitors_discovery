@@ -24,7 +24,6 @@ for index in $(seq ${#xrandrLines[@]}) ; do
     echo "Resolution: $resolution"
     echo "Refresh Rate: $rate"
     echo "-----"
-    echo "Name: $name - Resolution: $resolution - Rate: $rate" >> monitor_configs.txt
     if [[ $index -eq 0 ]] ; then
         xrandr --output $name  --mode $resolution --rate $rate
     else
