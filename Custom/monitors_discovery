@@ -1,49 +1,32 @@
 #!/usr/bin/env bash
-monitors=()
+monitorConfigs=()
 commands=()
-mapfile -t allMonitors < <( xrandr | grep -n "\bconnected\b" )
-for index in $(seq ${#allMonitors[@]}) ; do
+mapfile -t xrandrLines < <( xrandr | grep -n "\bconnected\b" )
+xrandr >> xrandr.txt
+for index in $(seq ${#xrandrLines[@]}) ; do
     ## Gets line to get best config from
     index=$(( index -= 1 )) 
-    if [[ ${allMonitors[$index]:1:1} == *":"* ]] ; then
-        line=${allMonitors[$index]:0:1}
+    if [[ ${xrandrLines[$index]:1:1} == *":"* ]] ; then
+        line=${xrandrLines[$index]:0:1}
     else
-        line=${allMonitors[$index]:0:2}
+        line=${xrandrLines[$index]:0:2}
     fi
-
     ## Get name of Monitor
-    if [[ ${allMonitors[$index]} == *"HDMI-0"* ]] ; then
-        name="HDMI-0"
-    elif [[ ${allMonitors[$index]} == *"DP-0"* ]] ; then
-        name="DP-0"
+    name=$(echo ${xrandrLines[$index]} | awk '{ print $1 }' | awk -F: '{ print $2 }')
+    # Gets configs for monitor
+    monitorConfigs[$index]=$(xrandr | head -n $(( line + 1 )) | tail -n 1)
+    resolution=$(echo ${monitorConfigs[$index]} | awk '{ print $1 }')
+    rate=$(echo ${monitorConfigs[$index]} | awk '{ print $3 }' | tr "*" " ")
+    if [[ $rate == "+" ]] ; then
+        rate=$(echo ${monitorConfigs[$index]} | awk '{ print $4 }' | tr "*" " ")
     fi
-
-    line=$(( line += 1 ))
-
-    ## Gets best config for monitor
-    monitors[index]=$(xrandr | head -n "$line" | tail -n 1)
-
-    ## Best Resolution
-
-    resolution=${monitors[$index]:3:9}
-
-    ## Splits configs into pieces
-    IFS=' ' read -ra ADDR <<< "${monitors[$index]}"
-    rate=1
-    for i in "${ADDR[@]}"; do
-        ## If valid refresh rate
-        if [[ "$i" != *"x"* ]] && [[ !"$i" != *"*"* ]] && [[ !"$i" != *"+"* ]]; then
-            if [[ $(echo "$i > $rate" | bc -l) -eq 1 ]] ; then
-                rate=$i
-            fi
-        fi
-    done
     echo "Name: $name"
     echo "Resolution: $resolution"
     echo "Refresh Rate: $rate"
     echo "-----"
+    echo "Name: $name - Resolution: $resolution - Rate: $rate" >> monitor_configs.txt
     if [[ $index -eq 0 ]] ; then
-        #xrandr --output $name  --mode $resolution --rate $rate
+        xrandr --output $name  --mode $resolution --rate $rate
     else
         xrandr --output $name --primary --mode $resolution --rate $rate --left-of $lastMonitorName
     fi
