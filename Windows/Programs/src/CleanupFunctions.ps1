@@ -29,9 +29,8 @@ function RemoveAllFiles() {
     $RemovedFolders = @()
     $TotalSize = 0
     $FolderCount = 0
-    foreach ($Folder in $Folders) { 
-        $Jobs += Start-Job -ScriptBlock $RemoveSingleFile -ArgumentList $Folder
-    }
+    foreach ($Folder in $Folders) { $Jobs += Start-Job -ScriptBlock $RemoveSingleFile -ArgumentList $Folder }
+
     foreach ($Job in $Jobs) {
         $FunctionOutput = Wait-Job $Job | Receive-Job
         # Se FunctionOutput[0] == null, houve falha ao remover o arquivo, é então continuado para o próximo arquivo.
@@ -39,10 +38,13 @@ function RemoveAllFiles() {
             Continue
         }
         $FolderCount += 1
-        $TotalSize += $FunctionOutput[1]
-        $RemovedFolders += $FunctionOutput[2]
+        $TotalSize += $FunctionOutput[0]
+        $RemovedFolders += $FunctionOutput[1]
     }
-    Write-EventLog -LogName "APPLICATION" -Source "Cleanup" -EntryType Information -EventID 4021 -Message "Cleaned $TotalSize MB from Folders below: $RemovedFolders"
+
+    $LogPhrase = "Cleaned $TotalSize MB from Folders below: "
+    foreach ($Folder in $RemovedFolders) { $LogPhrase += "`n$Folder" }
+    Write-EventLog -LogName "APPLICATION" -Source "Cleanup" -EntryType Information -EventID 4021 -Message "$LogPhrase"
     return $FolderCount, $TotalSize
 }
 
@@ -70,5 +72,3 @@ function UnninstallEdge {
         & "$SetupPath" --uninstall --system-level --force-uninstall
     }
 }
-
-RemoveAllFiles
