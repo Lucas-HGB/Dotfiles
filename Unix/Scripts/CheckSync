@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+from  os import listdir
+from shutil import copy
+from time import sleep
+
+while True:
+    sleep(300)
+    for file in listdir("/mnt/Storage/Music"):
+        if file not in listdir("/home/lucas/OneDrive/Music") and file.endswith(".mp3"):
+            print(f"Copying {file}")
+            copy(f"/mnt/Storage/Music/{file}", f"/home/lucas/OneDrive/Music/{file}")
