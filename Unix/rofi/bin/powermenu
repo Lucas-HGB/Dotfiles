@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+## Default
+DIR="nordic"
+STYLE="powermenu"
+
+rofi_command="rofi -theme $DIR/$STYLE.rasi"
+
+uptime=$(uptime -p | sed -e 's/up //g')
+
+shutdown=" Shutdown"
+reboot=" Restart"
+suspend=" Sleep"
+logout=" Logout"
+ddir="$HOME/.config/rofi/dialogs"
+
+
+
+
+rdialog () {
+rofi -dmenu\
+    -i\
+    -no-fixed-num-lines\
+    -p "Are You Sure? : "\
+    -theme "$ddir/confirm.rasi"
+}
+
+# Variable passed to rofi
+MSG="Options : yes / no / y / n"
+#options="$shutdown\n$reboot\n$suspend\n$logout"
+options="$shutdown\n$reboot\n$suspend\n$logout"
+
+chosen="$(echo -e "$options" | $rofi_command -p "UP - $uptime" -dmenu -selected-row 0)"
+case $chosen in
+    $shutdown)
+		ans=$(rdialog &)
+		if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+        systemctl poweroff
+		elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+        exit
+        fi
+        ;;
+    $reboot)
+		ans=$(rdialog &)
+		if [[ $ans == "yes" ]] || [[ $ans == "YES" ]] || [[ $ans == "y" ]]; then
+        systemctl reboot
+		elif [[ $ans == "no" ]] || [[ $ans == "NO" ]] || [[ $ans == "n" ]]; then
+        exit
+        fi
+        ;;
+    $suspend)
+        mpc -q pause
+        amixer set Master mute
+        i3lock-fancy
+        systemctl suspend
+        ;;
+    $logout)
+        i3-msg exit
+        ;;
+esac
+
