@@ -1,25 +1,21 @@
 #!/usr/bin/env bash
 
-STYLES_LIST=("transparent" "nordic" "angles")
+function start_polybar() {
 
-style="nordic" ## Only used if, for some reason, function below doesn't work
+	# Terminate already running bar instances
+	killall -q polybar
 
-function random_pick_from_list() {
-	len_list=${#STYLES_LIST[@]}
-	num=$(( $RANDOM % $len_list ))
-	style=${STYLES_LIST[$num]}
+	# Wait until the processes have been shut down
+	while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
+
+	# Launch the bar
+	if [[ ! $2 == *"single"* ]] ; then
+		polybar -q left_monitor -c "$HOME"/.config/polybar/$1/config.ini &
+	fi
+	polybar -q right_monitor -c "$HOME"/.config/polybar/$1/config.ini & 
+	
 }
 
-
-random_pick_from_list
-
-
-# Terminate already running bar instances
-killall -q polybar
-
-# Wait until the processes have been shut down
-while pgrep -u $UID -x polybar >/dev/null; do sleep 1; done
-
-# Launch the bar
-polybar -q left_monitor -c "$HOME"/.config/polybar/$style/config.ini &
-polybar -q right_monitor -c "$HOME"/.config/polybar/$style/config.ini & 
+if [ $1 ] ; then
+	start_polybar $1 $2
+fi

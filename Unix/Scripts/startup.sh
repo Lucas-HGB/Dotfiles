@@ -14,14 +14,14 @@ function pick_random_style() {
 	style=${STYLES_LIST[$num]}
 }
 
-STYLES_LIST=("angles" "blocks" "hack" "nordic" "transparent")
-style="blocks" # Fallback value
+STYLES_LIST=("angles" "nordic" "transparent" "hack")
+style="nordic" # Fallback value
 
 wallpapers_folder="/media/Storage/Pictures/Wallpapers"
 chosen_wallpaper="./wallpaper" # Only used if wallpaper is set via styli
 mapfile -t WALLPAPERS < <( /usr/bin/ls $wallpapers_folder ) # Creates list with wallpapers found in folder
 
-if [ $(( $RANDOM % 3 )) -eq 0 ] ; then
+if [ $(( $RANDOM % 3 )) -gt -1 ] ; then
 	pick_random_wallpaper
 	feh "$chosen_wallpaper" --bg-scale --no-xinerama &
 else
@@ -30,7 +30,7 @@ else
 fi
 
 pick_random_style # If uncommented, will choose random style from above list
+echo "Chosen Polybar Style: $style"
 start_polybar $style & # Starts polybar, passing style as arg
 ~/.config/polybar/$style/scripts/pywal.sh "$chosen_wallpaper" & # 
-# Sets polybar color-scheme to wallpaper color-scheme, if pywal is available for such theme
 flameshot 

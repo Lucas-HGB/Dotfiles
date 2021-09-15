@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
+bluetoothctl power on
 while : 
 do
     status=$(bluetoothctl info 94:DB:56:F5:75:1F | grep "\bConnected\b")
     if [[ "$status" == *"no"* ]] ; then
+	sleep 5
         echo "Bluetooth Headphone not Connected" 
         echo "Establishing connection to Bluetooth Headphone"
         bluetoothctl connect 94:DB:56:F5:75:1F
+	sleep 5
+	pactl set-card-profile 6 a2dp_sink
     fi
     sleep 5
 done
