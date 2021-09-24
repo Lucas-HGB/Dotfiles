@@ -10,7 +10,7 @@ function Notify($Title, $Message, $PathToImg) {
 
 function Main {
 	# Starts Edge Unninstall as a separate Job, so the rest of the code keeps runing.
-	Start-Job -ScriptBlock { UnninstallEdge }
+	UnninstallEdge
 	$FolderCount, $TotalSize = RemoveAllFiles
 	Write-Verbose -Message "Removed $TotalSize MB from $FolderCount Folders" -Verbose
 	Notify -Title "System Cleanup" -Message "Removed $TotalSize MB from $FolderCount Folders" -PathToImg "$PSScriptRoot\src\BroomIcon.png"
