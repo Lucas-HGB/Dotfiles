@@ -40,64 +40,69 @@ def Main():
     while True:
         for file in [file for file in listdir(Downloads) if isfile(join(Downloads, file)) 
             and not file.endswith("part") and not file.endswith("tmp")]:
-            result = filter(file)
-            if result == "Executável":
-                if not isdir(join(Downloads, "Executáveis")):
-                    mkdir(join(Downloads, "Executáveis"))
+            try:
+                result = filter(file)
+                if result == "Executável":
+                    if not isdir(join(Downloads, "Executáveis")):
+                        mkdir(join(Downloads, "Executáveis"))
 
-                endDir = join(Downloads, "Executáveis", file)
-                move(join(Downloads, file), endDir)
+                    endDir = join(Downloads, "Executáveis", file)
+                    move(join(Downloads, file), endDir)
 
-            elif result == "Office":
-                if not isdir(join(Documents, "Office")):
-                    mkdir(join(Documents, "Office"))
+                elif result == "Office":
+                    if not isdir(join(Documents, "Office")):
+                        mkdir(join(Documents, "Office"))
 
-                if not isdir(join(Documents, "Office", file.split(".")[-1])):
-                    mkdir(join(Documents, "Office", file.split(".")[-1]))
+                    if not isdir(join(Documents, "Office", file.split(".")[-1])):
+                        mkdir(join(Documents, "Office", file.split(".")[-1]))
 
-                endDir = join(Documents, "Office", file.split(".")[-1], file)
-                move(join(Downloads, file), endDir)
+                    endDir = join(Documents, "Office", file.split(".")[-1], file)
+                    move(join(Downloads, file), endDir)
 
-            elif result == "Picture":
-                endDir = "S:\\Pictures\\{}".format(file)
-                move(join(Downloads, file), endDir)
+                elif result == "Picture":
+                    endDir = "S:\\Pictures\\{}".format(file)
+                    move(join(Downloads, file), endDir)
 
-            elif result == "Compressed":
-                if not isdir(join(Downloads, "Compressed")):
-                    mkdir(join(Downloads, "Compressed"))
+                elif result == "Compressed":
+                    if not isdir(join(Downloads, "Compressed")):
+                        mkdir(join(Downloads, "Compressed"))
 
-                endDir = join(Downloads, "Compressed", file)
-                move(join(Downloads, file), endDir)
+                    endDir = join(Downloads, "Compressed", file)
+                    move(join(Downloads, file), endDir)
 
-            elif result == "Audio":
-                if not isdir(join(Music, "Downloads")):
-                    mkdir(join(Music, "Downloads"))
+                elif result == "Audio":
+                    if not isdir(join(Music, "Downloads")):
+                        mkdir(join(Music, "Downloads"))
 
-                endDir = join(Music, "Downloads", file)
-                move(join(Downloads, file), endDir)
+                    endDir = join(Music, "Downloads", file)
+                    move(join(Downloads, file), endDir)
 
-            elif result == "Coding":
-                if not isdir(join(Downloads, "Coding")):
-                    mkdir(join(Downloads, "Coding"))
+                elif result == "Coding":
+                    if not isdir(join(Downloads, "Coding")):
+                        mkdir(join(Downloads, "Coding"))
 
-                endDir = join(Downloads, "Coding", file)
-                move(join(Downloads, file), endDir)
+                    endDir = join(Downloads, "Coding", file)
+                    move(join(Downloads, file), endDir)
 
-            elif result == "Video":
-                endDir = join(Videos, file)
-                move(join(Downloads, file), endDir)
+                elif result == "Video":
+                    endDir = join(Videos, file)
+                    move(join(Downloads, file), endDir)
 
-            else:
-                if not isdir(join(Downloads, file.split(".")[-1])):
-                    mkdir(join(Downloads, file.split(".")[-1]))
+                else:
+                    if not isdir(join(Downloads, file.split(".")[-1])):
+                        mkdir(join(Downloads, file.split(".")[-1]))
 
-                endDir = join(Downloads, file.split(".")[-1], file)
-                move(join(Downloads, file), endDir)
+                    endDir = join(Downloads, file.split(".")[-1], file)
+                    move(join(Downloads, file), endDir)
 
-            programDir = dirname(realpath(__file__))
-            partEndDir = "\\".join(endDir.split("\\")[-3::])
-            Popen(r"""powershell -ExecutionPolicy unrestricted -command "& {{ . '{}\\src\\Notify.ps1'; Notify -Title 'Downloads' -PathToImg '{}\\src\\DownloadIcon.png' -Text '{}' -Action '{}' }} " """.format(
-                programDir, programDir, partEndDir, endDir), creationflags=CREATE_NO_WINDOW)
+                programDir = dirname(realpath(__file__))
+                partEndDir = "\\".join(endDir.split("\\")[-3::])
+                print(r"""powershell -ExecutionPolicy unrestricted -command "& {{ . '{}\\src\\Notify.ps1'; Notify -Title 'Downloads' -PathToImg '{}\\src\\DownloadIcon.png' -Text '{}' -Action '{}' }} " """.format(
+                    programDir, programDir, partEndDir, endDir))
+                Popen(r"""powershell -ExecutionPolicy unrestricted -command "& {{ . '{}\\src\\Notify.ps1'; Notify -Title 'Downloads' -PathToImg '{}\\src\\DownloadIcon.png' -Text '{}' -Action '{}' }} " """.format(
+                    programDir, programDir, partEndDir, endDir), creationflags=CREATE_NO_WINDOW)
+            except PermissionError:
+                continue
         sleep(3)
 
 
