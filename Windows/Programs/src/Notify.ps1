@@ -1,6 +1,9 @@
 function Notify($Text, $Title, $Base64, $Action=$null, $PathToImg, $Timeout=5)	
 {
 	# Demo script to display a custom 'toast' notification
+	if ($PathToImg -and !($PathToImg -like "*\*")) {
+		$PathToImg = ".\src\" + $PathToImg
+	}
 
 	# Load required assemblies
 	Add-Type -AssemblyName PresentationFramework, System.Windows.Forms
@@ -143,4 +146,5 @@ function Notify($Text, $Title, $Base64, $Action=$null, $PathToImg, $Timeout=5)
 }
 
 
-#Notify "Removidos 5 GB de 23 Folders" "System Cleanup" "$IMG" "ACTION"
+# Notify "Removidos 5 GB de 23 Folders" "System Cleanup" "$IMG" "ACTION"
+# Notify -Title 'Downloads' -PathToImg 'C:\Users\lucas\Documents\Dotfiles-main\Windows\Programs\\src\\DownloadIcon.png' -Text 'Downloads\Compressed\FlyingFox-master(1).zip' -Action 'C:\Users\lucas\Downloads\Compressed\FlyingFox-master(1).zip'
