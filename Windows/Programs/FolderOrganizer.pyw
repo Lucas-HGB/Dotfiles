@@ -47,22 +47,26 @@ class Main():
     def set_folders(self):
         self.downloads = Folders.get_downloads()
         self.documents = Folders.get_documents()
-        self.pictures = Folders.get_pictures()
-        self.music = Folders.get_music()
-        self.videos = Folders.get_videos()
+        self.pictures  = Folders.get_pictures()
+        self.music     = Folders.get_music()
+        self.videos    = Folders.get_videos()
 
     def organize(self):
         self.update_files()
         for file in self.files:
-            self.match_extension(file)
+            self.filter(file)
 
-    def match_extension(self, file):
+    def filter(self, file):
         extension = self.get_file_extension(file)
         for move_function, extensions in self.extension_mapping.items():
             if extension in extensions:
-                complete_path = move_function(file)
-        complete_path = self.move_default(file)
-        self.notify(os.path.join(self.downloads, file), complete_path)
+                complete_path, successfull = move_function(file)
+                if successfull:
+                    self.notify(os.path.join(self.downloads, file), complete_path)
+                return
+        complete_path, successfull = self.move_no_ext(file)
+        if successfull:
+            self.notify(os.path.join(self.downloads, file), complete_path)
 
     def update_files(self):
         self.files = [f for f in os.listdir(self.downloads) if self.get_file_extension(f) not in self.extension_blacklist and os.path.isfile(os.path.join(self.downloads, f))]
@@ -77,66 +81,50 @@ class Main():
             return
 
     def move(self, file, end_path):
-        file = os.path.join(self.downloads, file)
         try:
             move(file, end_path)
+            return True
         except (FileNotFoundError, PermissionError):
-            sleep(1)
+            return False
 
     def move_executable(self, file):
         end_dir = os.path.join(self.downloads, 'Executables')
-        complete_path = os.path.join(end_dir, file)
-        self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
+        return self.move_default(end_dir, file)
 
     def move_office(self, file):
         end_dir = os.path.join(self.documents, 'Office')
-        complete_path = os.path.join(end_dir, file)
-        self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
-
-    def move_picture(self, file):
-        end_dir = self.pictures
-        complete_path = os.path.join(end_dir, file)
-        self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
+        return self.move_default(end_dir, file)
 
     def move_compressed(self, file):
         end_dir = os.path.join(self.downloads, 'Compressed')
-        complete_path = os.path.join(end_dir, file)
-        self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
+        return self.move_default(end_dir, file)
+
+    def move_picture(self, file):
+        return self.move_default(self.pictures, file)
 
     def move_audio(self, file):
-        end_dir = self.music
-        complete_path = os.path.join(end_dir, file)
-        self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
+        return self.move_default(self.music, file)
 
     def move_video(self, file):
-        end_dir = self.videos
+        return self.move_default(self.videos, file)
+
+    def move_default(self, end_dir, file):
         complete_path = os.path.join(end_dir, file)
         self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
+        return complete_path, self.move(os.path.join(self.downloads, file), complete_path)
 
-    def move_default(self, file):
+    def move_no_ext(self, file):
         file_extension = self.get_file_extension(file)
         end_dir = os.path.join(self.downloads, file_extension)
         complete_path = os.path.join(end_dir, file)
         self.create_if_not_exists(end_dir)
-        self.move(file, complete_path)
-        return complete_path
+        return complete_path, self.move(os.path.join(self.downloads, file), complete_path)
 
     def notify(self, start_path, end_path):
         split_end_dir = "\\".join(end_path.split("\\")[-3::])
         Popen(r"""powershell -ExecutionPolicy unrestricted -command "& {{ . '{}\\src\\Notify.ps1'; Notify -Title 'Downloads' -PathToImg '{}\\src\\DownloadIcon.png' -Text '{}' -Action '{}' }} " """.format(
         self.script_path, self.script_path, split_end_dir, end_path), creationflags=CREATE_NO_WINDOW)
+
 
 
 if __name__ == "__main__":
