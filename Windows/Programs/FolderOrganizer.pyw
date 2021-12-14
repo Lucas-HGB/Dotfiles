@@ -5,8 +5,7 @@ from subprocess import Popen, CREATE_NO_WINDOW, PIPE, run
 
 
 def get_command_output(command):
-    output = run(["powershell.exe", "-Command", command],
-                 stdout=PIPE).stdout.decode('utf-8')
+    output = run(["powershell.exe", "-Command", command], stdout=PIPE).stdout.decode('utf-8')
     return output.replace("\n", "").replace("\r", "")
 
 
