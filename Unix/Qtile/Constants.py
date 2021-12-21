@@ -1,6 +1,6 @@
 
 
-class CONSTANTS():
+class CONSTANTS:
 
 	colors = [["#282c34", "#282c34"], # panel background
 	          ["#434758", "#434758"], # background for current screen tab
