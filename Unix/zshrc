@@ -29,7 +29,6 @@ alias ls='exa -l --color=always --group-directories-first' ## Lists everything n
 alias grep='grep --color=auto'
 alias own='sudo chmod 777'
 alias cls='clear'
-alias mysql="/usr/bin/mysql --host=192.168.0.20 --user=root --password=Luc@Workdb#2021"
 
 ## -- EXTRAS -- ##
 
