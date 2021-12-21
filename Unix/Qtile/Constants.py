@@ -2,7 +2,7 @@
 
 class CONSTANTS:
 
-	colors = [["#282c34", "#282c34"], # panel background
+	COLORS = [["#282c34", "#282c34"], # panel background
 	          ["#434758", "#434758"], # background for current screen tab
 	          ["#ffffff", "#ffffff"], # font color for group names
 	          ["#ff5555", "#ff5555"], # border line color for current tab
@@ -11,6 +11,6 @@ class CONSTANTS:
 	          ["#e1acff", "#e1acff"]] # window name
 
 
-	file_manager 		= 		"nemo"
-	web_browser 		= 		"firefox"
-	terminal 			= 		"alacritty"
+	FILE_MANAGER 		= 		"nemo"
+	WEB_BROWSER 		= 		"firefox"
+	TERMINAL 		= 		"alacritty"
