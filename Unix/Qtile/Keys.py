@@ -2,9 +2,6 @@ from libqtile.config import Key, Screen
 from libqtile import bar, widget
 from libqtile.lazy import lazy
 from Constants import CONSTANTS
-file_manager = CONSTANTS.file_manager
-web_browser = CONSTANTS.web_browser
-terminal = CONSTANTS.terminal
 
 def windowFocus(mod):
     windowFocusKeys = [
@@ -51,11 +48,11 @@ def windowSizes(mod):
 
 def launch(mod):
     launchKeys = [
-        Key([mod], "Return", lazy.spawn(terminal), 
-            desc="Launch terminal"),
-        Key([mod], "E", lazy.spawn(file_manager), 
+        Key([mod], "Return", lazy.spawn(CONSTANTS.TERMINAL), 
+            desc="Launch CONSTANTS.TERMINAL"),
+        Key([mod], "E", lazy.spawn(CONSTANTS.FILE_MANAGER), 
             desc="Launch File Manager"),
-        Key([mod], "f", lazy.spawn(web_browser), 
+        Key([mod], "f", lazy.spawn(CONSTANTS.WEB_BROWSER), 
             desc="Launch web browser"),
         Key([mod], "r", lazy.spawn("/home/lucas/.config/rofi/bin/launcher"),
             desc='Run dmenu'),
