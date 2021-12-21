@@ -27,41 +27,39 @@
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile import layout
+from libqtile.config import Click, Drag, Match
 from libqtile.lazy import lazy
 
 ## CUSTOM
-from Groups import getGroups
-from Keys import getKeys
-from Layouts import getLayouts
+from Groups import Groups
+from Keys import Keys
+from Layouts import Layout
 from Settings import getSettings
-from Screens import getScreens
+from Screens import Screens
 
-screens = getScreens()
+screens = Screens().get_screens()
 
-mod = "mod4"
-groupNames, groups = getGroups()
-keys = getKeys(mod, groupNames ,screens)
-layouts = getLayouts()
-dgroups_key_binder, dgroups_app_rules, main, follow_mouse_focus, bring_front_click, cursor_warp, auto_fullscreen, focus_on_window_activation, wmname = getSettings()
+group_names, groups = Groups().get_groups()
+keys = Keys(group_names).get_keys()
+layouts = Layout().get_layouts()
 
-widget_defaults = dict(
+locals().update(Settings().get_settings())
+
+widget_defaults = extension_defaults = dict(
     font='sans',
     fontsize=12,
-    padding=3,
+    padding=3
 )
-extension_defaults = widget_defaults.copy()
-
 
 
 # Drag floating layouts.
 mouse = [
-    Drag([mod], "Button1", lazy.window.set_position_floating(),
+    Drag([CONSTANTS.MOD], "Button1", lazy.window.set_position_floating(),
          start=lazy.window.get_position()),
-    Drag([mod], "Button3", lazy.window.set_size_floating(),
+    Drag([CONSTANTS.MOD], "Button3", lazy.window.set_size_floating(),
          start=lazy.window.get_size()),
-    Click([mod], "Button2", lazy.window.bring_to_front())
+    Click([CONSTANTS.MOD], "Button2", lazy.window.bring_to_front())
 ]
 
 

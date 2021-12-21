@@ -1,9 +1,18 @@
 from libqtile import layout
-layouts = [
-    layout.Max(),
-    layout.MonadTall(),
-    layout.Floating()
-]
 
-def getLayouts():
-    return layouts
+
+class Layout:
+
+	def __init__(self):
+		self.layouts = []
+
+	def init_layouts(self):
+		self.layouts += [
+		    layout.Max(),
+		    layout.MonadTall(),
+		    layout.Floating()
+		]
+
+	def get_layouts(self) -> list[layout]:
+		self.init_layouts()
+		return self.layouts

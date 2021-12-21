@@ -14,3 +14,4 @@ class CONSTANTS:
 	FILE_MANAGER 		= 		"nemo"
 	WEB_BROWSER 		= 		"firefox"
 	TERMINAL 		= 		"alacritty"
+	MOD = "mod4"
