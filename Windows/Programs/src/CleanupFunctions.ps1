@@ -8,7 +8,7 @@ $Folders = @("S:\Documents\Default.rdp", "S:\Pictures\Camera Roll", "S:\Pictures
 "C:\Windows\SoftwareDistribution\Download", "C:\Users\lucas\AppData\Local\Microsoft\Windows\Explorer", 
 "S:\Documents\Programs\__pycache__", "C:\`$RECYCLE.BIN", "S:\`$RECYCLE.BIN", 
 "C:\Program Files (x86)\Microsoft\EdgeCore", "C:\Program Files (x86)\Microsoft\EdgeUpdate",
-"C:\Program Files (x86)\Microsoft\EdgeWebView", "C:\Program Files\BsgLauncher\Temp", "C:\Users\lucas\AppData\Local\Microsoft\Teams\previous",
+"C:\Program Files (x86)\Microsoft\EdgeWebView", "C:\Users\lucas\AppData\Local\Microsoft\Teams\previous",
 "C:\Users\lucas\AppData\Roaming\discord\Cache")
 
 
